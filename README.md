@@ -1,151 +1,235 @@
-📰 Fake News Detection using BERT 🧠 + GNN 🌐 (Hybrid Deep Learning)
+# Fake News Detection
 
-📌 Project Overview
+> Hybrid Deep Learning System using BERT + GNN for Misinformation Detection
 
-This project implements a hybrid deep learning system for Fake News Detection by combining:
+## Overview
 
-🤖 BERT (Transformer-based NLP model) for deep semantic understanding of news text
+A hybrid deep learning system for fake news detection that combines:
 
-🌐 Graph Neural Networks (GNN) for capturing relational and contextual patterns
+- **BERT** (Transformer-based NLP) - Deep semantic understanding of news text
+- **GNN** (Graph Neural Network) - Captures relational and contextual patterns
+- **Fusion Model** - Combines both representations for robust classification
 
-🔗 Fusion Neural Network for final classification
+The system includes a modern web interface and REST API, fully containerized with Docker.
 
-The system is deployed as a FastAPI 🚀 web service and fully Dockerized 🐳, ensuring reproducibility across different machines.
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-🧠 Motivation
+---
 
-Fake news is not just about misleading text — it often spreads through networks, relationships, and context.
-Traditional text-only models fail to capture this behavior.
+## Architecture
 
-This project addresses the problem by:
+```
+Input News Text
+       ↓
+BERT Encoder (TensorFlow) → 768-dim embedding
+       ↓
+Graph Neural Network (PyTorch) → 128-dim embedding
+       ↓
+Fusion Classifier (768 + 128 + 64 = 960-dim)
+       ↓
+Fake/Real Probability
+```
 
-📝 Understanding what the news says using BERT
+---
 
-🧩 Modeling contextual / relational reasoning using GNN
+## Project Structure
 
-🔀 Fusing both representations for a more robust prediction
+```
+fake-news-detection/
+├── api/                    # FastAPI application
+│   └── app.py              # API endpoints
+├── data/                   # Dataset files
+│   ├── processed/          # Processed data
+│   └── raw/liar/           # LIAR dataset (train/test/valid)
+├── explainability/         # Feature ablation analysis
+├── fusion_model/           # Fusion classifier (PyTorch)
+├── gnn_model/              # Graph Neural Network (PyTorch)
+├── inference/              # Prediction pipeline
+├── static/                 # Frontend (HTML/CSS/JS)
+├── text_model/             # BERT encoder (TensorFlow)
+├── training/               # Training scripts
+├── user_model/             # User behavior MLP
+├── Dockerfile              # Container configuration
+├── requirements.txt        # Python dependencies
+├── run.sh                  # Linux/macOS run script
+├── run.bat                 # Windows CMD run script
+└── run.ps1                 # Windows PowerShell run script
+```
 
+---
 
+## Quick Start
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- 
-🏗️ System Architecture
+### Prerequisites
 
-📰 Input News Text
-        ↓
-🧠 BERT Encoder (TensorFlow) → 768-dim embedding
-        ↓
-🌐 Graph Neural Network (PyTorch) → 128-dim embedding
-        ↓
-🔗 Fusion Neural Network
-        ↓
-✅ Fake / Real Probability
+- Python 3.10.11
+- pip (Python package manager)
+- Git
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-⚙️ Technologies Used
-🤖 Machine Learning & AI
+### Step 1: Clone the Repository
 
-TensorFlow (BERT Encoder)
+```bash
+git clone https://github.com/shiva0022/Fake-News-Detection.git
+cd Fake-News-Detection
+```
 
-PyTorch (GNN & Fusion Model)
+---
 
-HuggingFace Transformers
+### Step 2: Create Virtual Environment
 
-PyTorch Geometric
+**Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 
-🌐 Backend & Deployment
+**Windows (CMD):**
+```cmd
+python -m venv .venv
+.venv\Scripts\activate.bat
+```
 
-FastAPI
+**Linux/macOS:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-Uvicorn
+---
 
-Docker
+### Step 3: Install Dependencies
 
-🛠️ Utilities
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-NumPy
+> **Note:** This may take several minutes as it downloads BERT models and PyTorch libraries.
 
-Pandas
+---
 
-Scikit-learn
+### Step 4: Run the Server
 
-SHAP (Explainability)
+```bash
+uvicorn api.app:app --reload
+```
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-🚀 Running the Project (Recommended: Docker 🐳)
-✅ Prerequisite
+### Step 5: Open in Browser
 
-Docker Desktop installed and running
-.Step 1: Clone the Repository
+- **Web Interface:** http://localhost:8000
+- **API Documentation:** http://localhost:8000/docs
 
-git clone https://github.com/vijai-ganeshh/fake-news-detection.git
-cd fake-news-detection
+---
 
-.Step 2: Build the Docker Image
+## Alternative: Using Run Scripts
+
+Instead of Steps 2-4, you can use the provided run scripts that automate everything:
+
+**Windows (PowerShell):**
+```powershell
+.\run.ps1
+```
+
+**Windows (CMD):**
+```cmd
+run.bat
+```
+
+**Linux/macOS:**
+```bash
+chmod +x run.sh
+./run.sh
+```
+
+---
+
+## Alternative: Using Docker
+
+```bash
+# Build image
 docker build -t fake-news-api .
 
-.Step 3: Run the Docker Container
+# Run container
 docker run -p 8000:8000 fake-news-api
+```
 
-.Step 4: Open FastAPI in Browser 🌍
-http://localhost:8000/docs
+---
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Usage
 
-🧪 Testing the /predict Endpoint
-📥 Sample Request
+### Web Interface
+Open http://localhost:8000 in your browser to access the frontend.
 
-{
-  "text": "Government confirms aliens landed yesterday and signed a secret agreement"
-}
+### API Endpoints
 
-📤 Sample Response
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Web interface |
+| GET | `/api/health` | Health check |
+| POST | `/predict` | Analyze news text |
+| GET | `/docs` | Swagger documentation |
 
+### API Request Example
+
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Scientists confirm drinking coffee cures all diseases instantly"}'
+```
+
+### API Response
+
+```json
 {
   "fake_probability": 0.82,
   "label": "Fake"
 }
+```
 
+---
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Technologies
 
-🧠 Important Notes on Predictions ⚠️
+| Category | Technologies |
+|----------|-------------|
+| **ML/AI** | TensorFlow, PyTorch, HuggingFace Transformers, PyTorch Geometric |
+| **Backend** | FastAPI, Uvicorn |
+| **Frontend** | HTML5, CSS3, JavaScript |
+| **Deployment** | Docker |
+| **Data** | NumPy, Pandas, Scikit-learn |
 
-🗣️ The model predicts Fake News, not opinions
+---
 
-👍 Praise or subjective statements are usually classified as Real
+## Model Details
 
-🚨 Sensational or false factual claims are more likely to be classified as Fake
+| Component | Input | Output | Technology |
+|-----------|-------|--------|------------|
+| BERT Encoder | Text | 768-dim | TensorFlow + HuggingFace |
+| GNN | 768-dim | 128-dim | PyTorch Geometric (GCNConv) |
+| User Features | - | 64-dim | Placeholder (zeros) |
+| Fusion | 960-dim | Probability | PyTorch (Linear + Sigmoid) |
 
-✅ This behavior is expected and correct.
+---
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Dataset
 
-📦 Reproducibility ♻️
+Uses the **LIAR dataset** with 10,270 training samples:
+- **Fake labels**: pants-fire, false, barely-true
+- **Real labels**: half-true, mostly-true, true
 
-The entire application is Dockerized, which guarantees:
+---
 
-Same Python version 🐍
+## Notes
 
-Same library versions 📦
+- The model predicts misinformation, not opinions
+- Subjective/praise statements are typically classified as Real
+- Sensational or false factual claims are more likely classified as Fake
 
-No dependency conflicts ❌
+---
 
-Any user can run this project using only Docker, without manually installing ML libraries.
+## License
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-🔮 Future Enhancements
-
-🌍 Real-world graph construction from social media data
-
-📰 Source credibility modeling
-
-🌐 Multilingual fake news detection
-
-☁️ Cloud deployment
-
-🎨 Frontend web interface
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+MIT License
 
